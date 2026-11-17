@@ -68,7 +68,9 @@ function useReveal(rootRef: { current: HTMLElement | null }) {
                         io.unobserve(en.target)
                     }
                 }),
-            { threshold: 0.1, rootMargin: "0px 0px -6% 0px" }
+            // threshold 0: a section taller than ~10 screens (the products section on a phone) can never
+            // show 10% of itself at once, so it must reveal as soon as any part of it is on screen
+            { threshold: 0, rootMargin: "0px 0px -8% 0px" }
         )
         els.forEach((el) => io.observe(el))
         return () => io.disconnect()
