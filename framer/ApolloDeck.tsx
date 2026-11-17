@@ -775,7 +775,8 @@ const CSS = `
   .apollo-deck .shot{margin:0; border:1px solid var(--apollo-line, rgba(255,255,255,.12)); border-radius:14px; overflow:hidden; background:#f3f5f4; box-shadow:var(--apollo-shadow);}
   .apollo-deck .shot__bar{display:flex; gap:6px; padding:9px 12px; background:#e7ebe9; border-bottom:1px solid rgba(0,0,0,.06);}
   .apollo-deck .shot__bar i{width:9px; height:9px; border-radius:50%; background:#c9d0cd; display:block;}
-  .apollo-deck .shot img{display:block; width:100%; height:auto;}
+  .apollo-deck .shot img{display:block; width:100%; height:auto; aspect-ratio:16/10; background:#e3e8e6;}
+  .apollo-deck .shot--dark img{background:#1a2023;}
   .apollo-deck .shot figcaption{padding:12px 16px 14px; font-size:13px; line-height:1.5; color:#3d4744; background:#fff;}
   .apollo-deck .shot figcaption b{color:#111; font-weight:600;}
   .apollo-deck .shot-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
@@ -916,6 +917,13 @@ const STACK_HTML = `
 
 /** Screenshots are hosted on GitHub Pages (rchase-sudo/apollo-site). */
 const ASSETS = "https://rchase-sudo.github.io/apollo-site/assets"
+/** Each screenshot has 800 and 1400 px WebP versions; the browser picks the smaller one where it fits. */
+const responsive = (html: string) =>
+    html.replace(/<img src="([^"]+)\.jpg"/g, (_m, base: string) => {
+        const big = /pm-dashboard|redline-workspace/.test(base)
+        const sizes = big ? "(max-width:820px) 100vw, 1100px" : "(max-width:820px) 100vw, 560px"
+        return `<img src="${base}-1400.webp" srcset="${base}-800.webp 800w, ${base}-1400.webp 1400w" sizes="${sizes}" width="1400" height="875" decoding="async"`
+    })
 const PM_DASHBOARD = `${ASSETS}/pm-dashboard.jpg`
 const PM_SCHEDULE = `${ASSETS}/pm-schedule.jpg`
 const PM_TASKS = `${ASSETS}/pm-tasks.jpg`
@@ -1323,7 +1331,7 @@ export default function ApolloDeck() {
             <ApolloScene prefix="--apollo-" opacity={0.55} />
             <div
                 className="ap3d-content"
-                dangerouslySetInnerHTML={{ __html: HTML }}
+                dangerouslySetInnerHTML={{ __html: responsive(HTML) }}
             />
         </div>
     )
